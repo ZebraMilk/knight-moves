@@ -2,7 +2,29 @@ import './style.css';
 
 console.log('Packs loaded and stuff.');
 
-function NewNode(x, y) {}
+const moveOptions = [
+  [1, 2],
+  [2, 1],
+  [2, -1],
+  [1, -2],
+  [-1, -2],
+  [-2, -1],
+  [-2, 1],
+  [-1, 2],
+];
+
+const BOARDSIZE = 8;
+const knightStart = [5, 4];
+
+function NewNode(x, y) {
+  return {
+    x,
+    y,
+    children: moveOptions.forEach((coord) => {
+      return [coord[0] * x, coord[1] * y];
+    }),
+  };
+}
 
 function NewBoard() {
   let gameBoard = Array(8);
@@ -25,21 +47,6 @@ function placeKnight(x, y) {
   const knightStart = [x, y];
   return knightStart;
 }
-
-const moveOptions = [
-  [1, 2],
-  [2, 1],
-  [2, -1],
-  [1, -2],
-  [-1, -2],
-  [-2, -1],
-  [-2, 1],
-  [-1, 2],
-];
-
-const BOARDSIZE = 8;
-const knightStart = [5, 4];
-
 // build a new tree/trie with knightStart as the root
 
 function find(x, y) {
@@ -47,7 +54,31 @@ function find(x, y) {
   return move;
 }
 
-function levelOrder(root = knightStart) {}
+function levelOrder(fn) {
+  // breadth-first traversal
+
+  let queue = [];
+  let result = [];
+
+  // push the root node onto the tree
+  queue.push(treeRoot);
+
+  // repeat until queue is empty
+  while (queue.length) {
+    // take a node from the front of the queue
+    let current = queue.shift();
+    // check for left/right children
+    if (current.left !== null) {
+      queue.push(current.left);
+    }
+    if (current.right !== null) {
+      queue.push(current.right);
+    }
+    // check if callback was provided
+    fn ? result.push(fn(current.data)) : result.push(current.data);
+  }
+  return result;
+}
 
 /* Utilities */
 
