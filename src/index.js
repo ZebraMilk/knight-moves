@@ -16,19 +16,50 @@ const moveOptions = [
 const BOARDSIZE = 8;
 const knightStart = [5, 4];
 
-function NewNode(x, y) {
+// WORKS!
+function NewNode(x, y, visited = false) {
+  const children = moveOptions
+    .filter((option) => {
+      // check if each value is legal before adding it to the array of children?
+      // avoid populating empty ordered pairs?
+      let newX = x + option[0];
+      // console.log(`Initial: ${x}\nMove: ${option[0]}\nResult: ${newX}`);
+      let newY = y + option[1];
+      // console.log(`Initial: ${y}\nMove: ${option[1]}\nResult: ${newY}`);
+      // console.log(isLegal(newX, newY));
+
+      // currently only return if it's a valid move
+      // can also check the gameBoard to see if it's been visited yet?
+      return isLegal(newX, newY);
+    })
+    .map((move) => {
+      return [x + move[0], y + move[1]];
+    });
+
   return {
     x,
     y,
-    children: moveOptions.forEach((coord) => {
-      return [coord[0] * x, coord[1] * y];
-    }),
+    visited,
+    children,
   };
 }
 
+// Initialize a board whose visited values are false
 function NewBoard() {
   let gameBoard = Array(8);
-  gameBoard.forEach((arr) => arr.push(Array(8)));
+  for (let i = 0; i < gameBoard.length; i++) {
+    gameBoard[i] = Array(
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    );
+  }
+  console.log(gameBoard);
   return gameBoard;
 }
 
@@ -67,15 +98,10 @@ function levelOrder(fn) {
   while (queue.length) {
     // take a node from the front of the queue
     let current = queue.shift();
-    // check for left/right children
-    if (current.left !== null) {
-      queue.push(current.left);
-    }
-    if (current.right !== null) {
-      queue.push(current.right);
-    }
+    // visit each child if they haven't been visited yet
+
     // check if callback was provided
-    fn ? result.push(fn(current.data)) : result.push(current.data);
+    fn ? result.push(fn(current)) : result.push(current);
   }
   return result;
 }
@@ -100,7 +126,10 @@ function makeMoves(current = knightStart) {
 
 // console.log(Board.NewBoard());
 
-const test = Board();
+const test = NewBoard();
 console.log(test);
-const testBoard = test.NewBoard();
-console.log(testBoard);
+console.log(test[0][0]);
+
+const testNode = NewNode(7, 7);
+console.log(testNode);
+console.log(NewNode(1, 1));

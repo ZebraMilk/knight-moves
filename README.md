@@ -5,18 +5,42 @@ creation date: 2023-07-15 19:34
 modification date: 2023-07-15 19:34:52
 ---
 
-# Your-Project-Title
+# (Working on our) Knight Moves
+
+## Project Playlist
+
+https://www.youtube.com/watch?v=EfhMt580b44
+
+https://www.youtube.com/watch?v=2D5tS3cdwX8
 
 ## Intent
 
 What's the point?
 
+Moving past Binary Trees and into trees with greater numbers of children, searching and traversing become a bit more complicated.
+
+We (my little duck and I) must determine the minimum possible moves a chess Knight can make to arrive at the destination square. On a classic, 8x8 board, every square is reachable from any initial position. Not only do we need to find the minimum *number* of moves, but also track and log the sequence of those moves.
+
+There's a bit of graph theory involved here, just like in Binary trees, just the structure get a little more complicated with more than two children. 
+
 ### Learning Goals
 
-- [ ] Goal 1
-- [ ] Goal
-- [ ] Goal
-- [ ] Goal
+- [ ] Decide which data structure to use (probably trees, since that's what the past few lessons were about)
+- [ ] Implement an algorithm that builds a tree of Nodes laying out the knight's future move destiny
+- [ ] Find the leaf child of the desired ending square
+- [ ] Log the moves along that path
+- [ ] Make a UI
+- [ ] Have user input, click the destination square to highlight it,
+- [ ] Animate the knight token across the board
+- [ ] Bonus: Make the board dimensions flexible
+  - [ ] Need to find the n-dimension boards where every square is accessible
+- [ ] Bonus bonus: Make a 3-D board...
+
+
+I built this project to dig into algorithms and data structures. Thinking about what structure would work best, how to search for the values and find the path.
+
+
+
 
 Provide a short description explaining the what, why, and how of your project. Use the following questions as a guide:
 
@@ -51,6 +75,8 @@ To add a screenshot, create an `assets/images` folder in your repository and upl
     ```
 
 ## Tests
+
+
 
 ## Project Requirements
 
@@ -140,6 +166,44 @@ there should be 63 leaf nodes on this tree, and each node should be unique
   - knightEnd
 
 
+### Board
+
+Perhaps set this up like an array of stuffs
+How do I track the indexes of moves?
+64 squares on the board
+each square should be a leaf node eventually
+
+Should I make the board first and populate it with Nodes?
+64 nodes with children, coordinates, visited boolean
+
+### Node
+
+Each node in this tree will have 8 children, as a tuple:
+- x coordinate
+- y coordinate
+- visited boolean
+- array of possible subsequent moves
+
+### Constructing the tree
+
+First need to build the tree of possible moves
+
+#### Visiting squares
+
+So rather than populating a 'board' of squares, just keep track of the moves as children?
+
+I can think of two ways to do this.
+
+have an array of arrays that represent each square
+each square contains an object that contains whether the node has been visited yet
+the board is empty, initially
+
+### Traversal
+
+Breadth first traversal
+implement a queue structure
+check if the desired node is already visited, if not, then make it and visit it?
+
 
 
 ### Problems
@@ -185,3 +249,27 @@ So if later on, the knight could move to a node that has `visited` true, we can 
 ### UI thoughts
 
 wait until the result array is "published", then animate the knight token to the different squares on the gameBoard until arriving at the destination
+
+## Bob Seger
+
+Mmm, night moves (Mmm)  
+Night moves (Night moves)  
+Night moves (Yeah)
+Night moves (I remember)  
+Night moves (Ah, sure remember the night moves)  
+Night moves (Ain't it funny how you remember?)
+Night moves (Funny how you remember)  
+Night moves (I remember, I remember, I remember, I remember)  
+Night moves (Oh, oh, oh)  
+Night moves (We were working, working and practicing)  
+Night moves (Working and practicing)  
+Night moves (Oh for the night moves, night moves)  
+Night moves (Oh)  
+Night moves (I remember, yeah yeah yeah)  
+Night moves (I remember, ooh)  
+Night moves (I remember, Lord I remember)  
+Night moves (Lord I remember, huh huh)  
+Ooh  
+Oh yeah yeah yeah  
+Uh huh, uh huh  
+I remember, I remember
