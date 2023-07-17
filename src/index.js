@@ -21,12 +21,9 @@ function NewNode(x, y, visited = false) {
   const children = moveOptions
     .filter((option) => {
       // check if each value is legal before adding it to the array of children?
-      // avoid populating empty ordered pairs?
+
       let newX = x + option[0];
-      // console.log(`Initial: ${x}\nMove: ${option[0]}\nResult: ${newX}`);
       let newY = y + option[1];
-      // console.log(`Initial: ${y}\nMove: ${option[1]}\nResult: ${newY}`);
-      // console.log(isLegal(newX, newY));
 
       // currently only return if it's a valid move
       // can also check the gameBoard to see if it's been visited yet?
@@ -48,46 +45,36 @@ function NewNode(x, y, visited = false) {
 function NewBoard() {
   let gameBoard = Array(8);
   for (let i = 0; i < gameBoard.length; i++) {
-    gameBoard[i] = Array(
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
-    );
+    gameBoard[i] = [false, false, false, false, false, false, false, false];
   }
   console.log(gameBoard);
   return gameBoard;
 }
 
-function newSquare(x, y, visited = false) {
-  let square = {
-    x,
-    y,
-    visited,
-  };
-  return square;
-}
-
-function placeKnight(x, y) {
+// default starting position for now
+function placeKnight(x = 5, y = 5) {
   let gameBoard = NewBoard();
-  gameBoard[y - 1][x - 1] = 'knightStart';
-  const knightStart = [x, y];
-  return knightStart;
+  gameBoard[y - 1][x - 1] = true;
+  const knightStart = NewNode(x, y, true);
+  return { knightStart, gameBoard };
 }
+
+function getTarget(x = 1, y = 8) {
+  gameBoard(y - 1, x - 1) = 'target';
+  let target = NewNode(x, y);
+  return target;
+}
+
 // build a new tree/trie with knightStart as the root
+const knight = (() => {
+  const knightMoves = [];
+  return {
+    knightMoves,
+  };
+})();
 
-function find(x, y) {
-  // returns true if the [x, y] is in the knight's move history
-  return move;
-}
-
+// breadth-first traversal
 function levelOrder(fn) {
-  // breadth-first traversal
-
   let queue = [];
   let result = [];
 
@@ -116,6 +103,11 @@ function isLegal(x, y) {
   }
 }
 
+function find(x, y) {
+  // returns true if the [x, y] is in the knight's move history, or if the node is visited, or if that board square is visited
+  return move;
+}
+
 // only 7 possible child moves, max, can't go back from whence we came
 
 function makeMoves(current = knightStart) {
@@ -133,3 +125,7 @@ console.log(test[0][0]);
 const testNode = NewNode(7, 7);
 console.log(testNode);
 console.log(NewNode(1, 1));
+
+const newGame = placeKnight();
+console.log(newGame.gameBoard);
+console.log(newGame.knightStart);

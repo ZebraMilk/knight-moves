@@ -157,6 +157,12 @@ that becomes the root.
 
 there should be 63 leaf nodes on this tree, and each node should be unique
 
+!! IMPORTANT
+
+The gameBoard array has inverse indices if I want to log/print it and have it make sense
+
+x is the index in the subarray, -1 to convert to 0-indexing
+y is the index in the actual array, -1 to convert to 0-indexing
 
 
 
@@ -184,6 +190,10 @@ Each node in this tree will have 8 children, as a tuple:
 - visited boolean
 - array of possible subsequent moves
 
+### Destination
+
+
+
 ### Constructing the tree
 
 First need to build the tree of possible moves
@@ -198,13 +208,27 @@ have an array of arrays that represent each square
 each square contains an object that contains whether the node has been visited yet
 the board is empty, initially
 
+So we're comparing the visited quality of the board square state in order to determine if it gets added as a child
+Rather than search the tree for the node anywhere (O of n lg n?) we just index into the correct square of the gameboard to see if it's been visited?
+
+Otherwise, if we want to add a child node, we have to traverse the entire tree and check if that node already exists?
+
+See, this isn't that bad, only the existing tree gets searched, so it doesn't take too much more time or resources to find the value if it exists.
+
+
+
 ### Traversal
 
 Breadth first traversal
 implement a queue structure
 check if the desired node is already visited, if not, then make it and visit it?
 
+Make a `knightPath` array, with each entry being an `[x, y]` tuple, the coordinates of the previous moves
+or it could be an array of the node objects in its path? possible more versatile if I want nodes to have other properties for the UI?
 
+Not only do we have to traverse down the tree to find the desired ending position
+We also have to move back up to the root and add the "moves" to the path array.
+then possibly reverse it to get the actual move order?
 
 ### Problems
 
@@ -222,6 +246,8 @@ children: [[x1,y1],[x2,y2]...], // ignore moves that are out of bounds
 visited: false, // change to true once the current knight path takes her to that node
 }
 ```
+
+**Update** Nope, going to use a plain ol' tree for now. I think there's something cool about tries eventually, but it's not needed for this one.
 
 
 - Translate the moves around the board array into human-readable chess language, and also adjust the indices to be human legible
