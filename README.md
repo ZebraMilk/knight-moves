@@ -165,6 +165,20 @@ x is the index in the subarray, -1 to convert to 0-indexing
 y is the index in the actual array, -1 to convert to 0-indexing
 
 
+Okay, so let's just not worry about human legible anything yet, and do that later.
+
+Need to extract all the board functions into a factory module thing.
+board needs to:
+- create an empty board
+- track knight starting position (the root of the tree!)
+  - call the root 'knight'
+- mark destination square as 'end'
+
+other functionality:
+- visit square function
+
+
+
 
 - UI
   - boardState
@@ -190,9 +204,42 @@ Each node in this tree will have 8 children, as a tuple:
 - visited boolean
 - array of possible subsequent moves
 
+
+Need to test that the children are being created correctly
+
+seems so
+
+but right now the children aren't nodes, they're tuples, x,y pair in an array.
+
+Can I construct a tree using this knowledge?
+
+So build the move tree of the knight one level at a time
+just to get that sweet tree out there.
+
+then build it until the value is found?
+
+---
+
+So I need to lay out the process
+
+Separate the makeChildren function that accepts a node?
+Or just start at the root/knight square
+Add all valid children to the queue
+
+Shift first queue
+Check if cords match end square
+Return the tree so far
+Add all valid children of that to queue
+Visit node
+Add to root children array if it's not end or visited
+
+
+so just build the tree first
+
 ### Destination
 
-
+pass in x and y coordinates
+mark the gameboard value as 'target' rather than true/false
 
 ### Constructing the tree
 
