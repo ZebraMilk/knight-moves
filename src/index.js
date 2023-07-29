@@ -1,7 +1,7 @@
 import './style.css';
 
 console.log('Packs loaded and stuff.');
-
+// global constants
 const moveOptions = [
   [1, 2],
   [2, 1],
@@ -15,157 +15,167 @@ const moveOptions = [
 
 const BOARDSIZE = 8;
 const gameBoard = NewBoard();
-const knightStart = placeKnight(4, 4);
-console.log(knightStart);
+const knightStart = placeKnight(0, 0);
+const targetSquare = getTarget(7, 7);
 
-// WORKS!
-function NewNode(x, y, visited = false) {
-  const children = [];
+function NewNode(x, y, parentNode = null, visited = false) {
+  const name = `${x}, ${y}`;
+  const xIndex = x;
+  const yIndex = y;
+  const parent = parentNode;
+  let children = [];
 
   return {
-    x,
-    y,
-    visited,
+    name,
+    xIndex,
+    yIndex,
+    parent,
     children,
+    visited,
   };
 }
 
+function placeKnight(x = 4, y = 4) {
+  // access the bottom row first, then the column of that row, reverse y and x
+  gameBoard[y][x] = 'start';
+  const startingSquare = NewNode(x, y, null, 'start');
+  return startingSquare;
+}
+
+function getTarget(x = 0, y = 0) {
+  gameBoard[y][x] = 'end';
+  const target = [x, y];
+  return target;
+}
 // Initialize a board whose visited values are false
 function NewBoard() {
-  let gameBoard = Array(8);
-  for (let i = 0; i < gameBoard.length; i++) {
+  let gameBoard = Array(BOARDSIZE);
+  for (let i = 0; i < BOARDSIZE; i++) {
     gameBoard[i] = [false, false, false, false, false, false, false, false];
   }
-  // console.log(gameBoard);
   return gameBoard;
 }
 
-// default starting position for now
-// have humans put in the x,y like normal
-// but no humans... just me...
-function placeKnight(x = 5, y = 5) {
-  // access the bottom row first, then the column of that row, reverse y and x
-  gameBoard[BOARDSIZE - y - 1][x] = 'start';
-  const knightStart = NewNode(x, y, 'start');
-  return knightStart;
-}
-
-function setTarget(x = 0, y = 7) {
-  gameBoard[BOARDSIZE - 1 - y][x] = 'end';
-  let target = NewNode(x, y, 'end');
-  return target;
-}
-
-// build a new tree with knightStart as the root
-
-function visitNode(node) {
-  gameBoard[BOARDSIZE - 1 - node.y][node.x] = true;
-  return (node.visited = true);
-}
-
-// make the tree of moves from the knight start node
-function buildTree(root = knightStart) {}
-
-// breadth-first traversal
-function levelOrder(fn) {
+function buildMoveTree(start) {
   let queue = [];
   let result = [];
-  let moveCount = 0;
+  let path = [];
 
-  // push the root node onto the tree
-  queue.push(knightStart);
-
-  // repeat until queue is empty
-  while (queue.length) {
-    // take a node from the front of the queue
+  queue.push(start);
+  console.log(queue);
+  while (queue.length > 0) {
+    // take from front of queue
     let current = queue.shift();
-    // if current is the target, return that node
-    if (current.x === target.x && currrent.y === target.y) {
-      moveCount++;
-      return current;
+    if (_checkTarget(current, targetSquare)) {
+      _getPath(current, start);
+      console.log(path.reverse());
     }
-    // visit current to remove it from further calculations
-    visitNode(current);
-    // populate valid children
-    addChildren(current);
+    // visit it
+    _visit(current);
+    // populate its children
+    _addChildren(current);
     // add children to the queue
-    current.children.forEach((child) => queue.push(child));
-    // check if callback was provided
-    fn ? result.push(fn(current)) : result.push(current);
+    current.children.forEach((child) => {
+      queue.push(child);
+    });
+    result.push(current);
   }
-  return result;
-}
-
-/* Utilities */
-// takes a node and populates the children with new nodes
-function addChildren(node) {
-  return (node.children = moveOptions
-    // check if each value is legal before adding it to the array of children
-    .filter((option) => {
-      let newX = node.x + option[0];
-      let newY = node.y + option[1];
-      let childSquare = gameBoard[BOARDSIZE - 1 - newY][x];
-      // only return if it's a valid move and not yet visited (will add end)
-      return (
-        isLegal(newX, newY) &&
-        (gameBoard[BOARDSIZE - 1 - newY][newX] === false ||
-          gameBoard[BOARDSIZE - 1 - newY][newX] === 'end')
-      );
-    })
-    // translate each move tuple into a node
-    .map((move) => {
-      return NewNode(node.x + move[0], node.y + move[1]);
-    }));
-
-  // .map((move) => {
-  //   return NewNode(x + move[0], y + move[1]);
-  // });
-}
-
-function isLegal(x, y) {
-  if (x < BOARDSIZE && x >= 0 && y < BOARDSIZE && y >= 0) {
-    return true;
-  } else {
-    return false;
+  // takes an expecting parent and populates its children with new nodes
+  function _addChildren(parent) {
+    // 5 checks
+    parent.children = moveOptions
+      // check if each move is legal before adding it to the array of children
+      .filter((option) => {
+        let newX = parent.xIndex + option[0];
+        let newY = parent.yIndex + option[1];
+        // only return if it's a valid move and not yet visited
+        return _isLegal(newX, newY) && !_isVisited(newX, newY);
+      })
+      // translate each remaining move into a node with current node as parent
+      .map((move) => {
+        return NewNode(
+          parent.xIndex + move[0],
+          parent.yIndex + move[1],
+          parent
+        );
+      });
+    parent.children = _checkQueue(parent);
+    parent.children = _checkResult(parent);
+    return parent;
   }
-}
 
-function find(x, y) {
-  // returns true if the [x, y] is in the knight's move history, or if the node is visited, or if that board square is visited
-  return move;
-}
-
-// only 7 possible child moves, max, can't go back from whence we came
-
-function makeMoves(current = knightStart) {
-  {
-    // remove that child from the options in this knight's path, so he doesn't retrace his steps
+  function _getPath(current) {
+    path.push(current);
+    if (current.parent !== null) {
+      return _getPath(current.parent);
+    }
   }
+
+  function _checkTarget(current, target) {
+    if (current.xIndex === target[0] && current.yIndex === target[1]) {
+      console.log('Target found!!! ');
+      console.log(current);
+      return true;
+    }
+  }
+
+  function _checkQueue(current) {
+    for (let i = 0; i < queue.length; i++) {
+      current.children = current.children.filter((child) => {
+        return child.name !== queue[i].name;
+      });
+    }
+    return current.children;
+  }
+
+  function _checkResult(current) {
+    for (let i = 0; i < result.length; i++) {
+      current.children = current.children.filter((child) => {
+        return child.name !== result[i].name;
+      });
+    }
+    return current.children;
+  }
+
+  // Utilities
+
+  // check if move is on the board
+  function _isLegal(x, y) {
+    if (x < BOARDSIZE && x >= 0 && y < BOARDSIZE && y >= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function _isVisited(x, y) {
+    if (gameBoard[y][x] === false || gameBoard[y][x] === 'end') {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  function _visit(node) {
+    if (node.visited === 'start') {
+      return;
+    }
+    node.visited = true;
+    gameBoard[node.yIndex][node.xIndex] = true;
+    return node;
+  }
+
+  return { start, result };
+}
+// helper function to get "accurate" y value
+// sets the 0 index to the "bottom" row of the board
+function truthY(y) {
+  return BOARDSIZE - 1 - y;
 }
 
-console.log(gameBoard);
-const testNode = NewNode(4, 4);
-console.log(testNode);
-const newNode = NewNode(4, 4);
-visitNode(5, 6);
-addChildren(newNode);
-console.log(newNode);
+// Driver functions
 
-console.log(levelOrder());
+const newStart = buildMoveTree(knightStart);
+console.log(newStart.result);
 
-// console.log(Board.NewBoard());
-
-// console.log(gameBoard[0][0]);
-
-// console.log(testNode);
-// console.log(NewNode(1, 1));
-// console.log(NewNode(3, 4));
-
-// visitNode(0, 0);
-// visitNode(1, 0);
-// visitNode(2, 0);
-// visitNode(3, 0);
-// visitNode(4, 0);
-// visitNode(5, 0);
-// visitNode(6, 0);
-// visitNode(7, 0);
+// console.log(gameBoard);
